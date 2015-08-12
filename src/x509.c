@@ -8,7 +8,7 @@
 
 #include <string.h>
 
-#if defined(WIN32)
+#if defined(_WIN32)
 #include <ws2tcpip.h>
 #include <windows.h>
 #else

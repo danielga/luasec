@@ -10,7 +10,7 @@
 #include <errno.h>
 #include <string.h>
 
-#if defined(WIN32)
+#if defined(_WIN32)
 #include <Winsock2.h>
 #endif
 
@@ -36,7 +36,7 @@
  */
 static int lsec_socket_error()
 {
-#if defined(WIN32)
+#if defined(_WIN32)
   return WSAGetLastError();
 #else
   return errno;
