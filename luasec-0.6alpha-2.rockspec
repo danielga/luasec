@@ -1,8 +1,8 @@
 package = "LuaSec"
-version = "0.5-3"
+version = "0.6alpha-2"
 source = {
    url = "git://github.com/brunoos/luasec.git",
-   tag = "luasec-0.5"
+   tag = "luasec-0.6alpha"
 }
 description = {
    summary = "A binding for OpenSSL library to provide TLS/SSL communication over LuaSocket.",
@@ -74,7 +74,8 @@ build = {
          modules = {
             ssl = {
                defines = {
-                  "WIN32", "NDEBUG", "_WINDOWS", "_USRDLL", "LSEC_EXPORTS", "BUFFER_DEBUG", "LSEC_API=__declspec(dllexport)"
+                  "WIN32", "NDEBUG", "_WINDOWS", "_USRDLL", "LSEC_EXPORTS", "BUFFER_DEBUG", "LSEC_API=__declspec(dllexport)",
+                  "LUASEC_INET_NTOP", "WINVER=0x0501", "_WIN32_WINNT=0x0501", "NTDDI_VERSION=0x05010300"
                },
                libdirs = {
                   "$(OPENSSL_LIBDIR)",
