@@ -35,6 +35,32 @@ typedef const SSL_METHOD LSEC_SSL_METHOD;
 typedef       SSL_METHOD LSEC_SSL_METHOD;
 #endif
 
+#if OPENSSL_VERSION_NUMBER>=0x10100000L && !defined(LIBRESSL_VERSION_NUMBER)
+#define SSLv23_method() TLS_method()
+#endif
+
+/*-- Compat - Lua 5.1 --------------------------------------------------------*/
+
+#if (LUA_VERSION_NUM == 501)
+
+#define luaL_testudata(L, ud, tname)  testudata(L, ud, tname)
+
+static void *testudata (lua_State *L, int ud, const char *tname) {
+  void *p = lua_touserdata(L, ud);
+  if (p != NULL) {  /* value is a userdata? */
+    if (lua_getmetatable(L, ud)) {  /* does it have a metatable? */
+      luaL_getmetatable(L, tname);  /* get correct metatable */
+      if (!lua_rawequal(L, -1, -2))  /* not the same? */
+        p = NULL;  /* value is a userdata with wrong metatable */
+      lua_pop(L, 2);  /* remove both metatables */
+      return p;
+    }
+  }
+  return NULL;  /* value is not a userdata with a metatable */
+}
+
+#endif
+
 /*--------------------------- Auxiliary Functions ----------------------------*/
 
 /**
@@ -43,6 +69,11 @@ typedef       SSL_METHOD LSEC_SSL_METHOD;
 static p_context checkctx(lua_State *L, int idx)
 {
   return (p_context)luaL_checkudata(L, idx, "SSL:Context");
+}
+
+static p_context testctx(lua_State *L, int idx)
+{
+  return (p_context)luaL_testudata(L, idx, "SSL:Context");
 }
 
 /**
@@ -65,8 +96,11 @@ static int set_option_flag(const char *opt, unsigned long *flag)
  */
 static LSEC_SSL_METHOD* str2method(const char *method)
 {
-  if (!strcmp(method, "sslv23"))  return SSLv23_method();
+  if (!strcmp(method, "any"))     return SSLv23_method();
+  if (!strcmp(method, "sslv23"))  return SSLv23_method();  // deprecated
+#ifndef OPENSSL_NO_SSL3
   if (!strcmp(method, "sslv3"))   return SSLv3_method();
+#endif
   if (!strcmp(method, "tlsv1"))   return TLSv1_method();
 #if (OPENSSL_VERSION_NUMBER >= 0x1000100fL)
   if (!strcmp(method, "tlsv1_1")) return TLSv1_1_method();
@@ -707,6 +741,12 @@ SSL_CTX* lsec_checkcontext(lua_State *L, int idx)
 {
   p_context ctx = checkctx(L, idx);
   return ctx->context;
+}
+
+SSL_CTX* lsec_testcontext(lua_State *L, int idx)
+{
+  p_context ctx = testctx(L, idx);
+  return (ctx) ? ctx->context : NULL;
 }
 
 /**
