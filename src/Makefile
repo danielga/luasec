@@ -21,8 +21,8 @@ MAC_CFLAGS=-O2 -fno-common $(WARN) $(INCDIR) $(DEFS)
 MAC_LDFLAGS=-bundle -undefined dynamic_lookup $(LIBDIR)
 
 INSTALL  = install
-CC       = cc
-LD       = $(MYENV) cc
+CC      ?= cc
+LD      ?= $(MYENV) cc
 CFLAGS  += $(MYCFLAGS)
 LDFLAGS += $(MYLDFLAGS)
 
@@ -31,10 +31,10 @@ LDFLAGS += $(MYLDFLAGS)
 all:
 
 install: $(CMOD) $(LMOD)
-	$(INSTALL) -d $(LUAPATH)/ssl $(LUACPATH)
-	$(INSTALL) $(CMOD) $(LUACPATH)
-	$(INSTALL) -m644 $(LMOD) $(LUAPATH)
-	$(INSTALL) -m644 https.lua $(LUAPATH)/ssl
+	$(INSTALL) -d $(DESTDIR)$(LUAPATH)/ssl $(DESTDIR)$(LUACPATH)
+	$(INSTALL) $(CMOD) $(DESTDIR)$(LUACPATH)
+	$(INSTALL) -m644 $(LMOD) $(DESTDIR)$(LUAPATH)
+	$(INSTALL) -m644 https.lua $(DESTDIR)$(LUAPATH)/ssl
 
 linux:
 	@$(MAKE) $(CMOD) MYCFLAGS="$(LNX_CFLAGS)" MYLDFLAGS="$(LNX_LDFLAGS)" EXTRA="$(EXTRA)"
