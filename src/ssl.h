@@ -2,8 +2,9 @@
 #define LSEC_SSL_H
 
 /*--------------------------------------------------------------------------
- * LuaSec 0.6
- * Copyright (C) 2006-2016 Bruno Silvestre
+ * LuaSec 0.9
+ *
+ * Copyright (C) 2006-2019 Bruno Silvestre
  *
  *--------------------------------------------------------------------------*/
 
@@ -15,7 +16,7 @@
 #include <luasocket/timeout.h>
 #include <luasocket/socket.h>
 
-#include "config.h"
+#include "compat.h"
 #include "context.h"
 
 #define LSEC_STATE_NEW       1
